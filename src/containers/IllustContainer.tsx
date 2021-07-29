@@ -23,31 +23,31 @@ import Img from 'react-image';
 import { Helmet } from 'react-helmet';
 import { useIntl } from 'react-intl';
 import { useObserver } from 'mobx-react-lite';
-import moment from 'moment';
+import dayjs from 'dayjs';
 
-import config from '@/config';
+import config from '../config';
 
-import { useAlert } from '@/components/Alert';
-import Comment from '@/components/Comment';
-import GifPlayer from '@/components/GifPlayer';
-import InfiniteScroll from '@/components/InfiniteScroll';
-import Loading from '@/components/Loading';
-import Message from '@/components/Message';
-import Content, { IContentHandles } from '@/components/Content';
-import ImageBox from '@/components/ImageBox';
-import LanguageSelector from '@/components/LanguageSelector';
-import WeiboIcon from '@/icons/Weibo';
-import LineIcon from '@/icons/Line';
+import { useAlert } from '../components/Alert';
+import Comment from '../components/Comment';
+import GifPlayer from '../components/GifPlayer';
+import InfiniteScroll from '../components/InfiniteScroll';
+import Loading from '../components/Loading';
+import Message from '../components/Message';
+import Content, { IContentHandles } from '../components/Content';
+import ImageBox from '../components/ImageBox';
+import LanguageSelector from '../components/LanguageSelector';
+import WeiboIcon from '../icons/Weibo';
+import LineIcon from '../icons/Line';
 import LoginContainer, {
   ILoginContainerHandles,
   UserButton
-} from '@/containers/LoginContainer';
-import { useStyles as useGalleryStyles } from '@/containers/GalleryContainer';
-import * as api from '@/utils/api';
-import Social from '@/utils/Social';
+} from './LoginContainer';
+import { useStyles as useGalleryStyles } from './GalleryContainer';
+import * as api from '../utils/api';
+import Social from '../utils/Social';
 
-import { GalleryContext } from '@/stores/GalleryStore';
-import { IllustContext } from '@/stores/IllustStore';
+import { GalleryContext } from '../stores/GalleryStore';
+import { IllustContext } from '../stores/IllustStore';
 
 const useStyles = makeStyles({
   toolbarTitle: {
@@ -220,7 +220,7 @@ const IllustContainer: React.FC<{}> = () => {
   };
 
   const onBookmarkClick = async () => {
-    if (moment().year() >= 2021) {
+    if (dayjs().year() >= 2021) {
       makeAlert(
         'error',
         intl.formatMessage({
@@ -274,6 +274,21 @@ const IllustContainer: React.FC<{}> = () => {
     gallery.setWord(tag);
     gallery.setFromIllust(true);
     history.push('/');
+  };
+
+  const filterCaption = (caption: string) => {
+    const wrapper = document.createElement('div');
+    wrapper.innerHTML = caption;
+    const links = Array.from(wrapper.querySelectorAll('a'));
+    links.forEach(link => {
+      let href = link.href;
+      const index = href.indexOf('/jump.php?');
+      if (index > -1) {
+        href = href.substring(index + 10);
+        link.href = decodeURIComponent(href);
+      }
+    });
+    return wrapper.innerHTML;
   };
 
   React.useEffect(() => {
@@ -358,7 +373,7 @@ const IllustContainer: React.FC<{}> = () => {
           <div className={classes.image}>{renderImage()}</div>
           <div className={classes.caption}>
             {typeof item.caption === 'string' &&
-              (item.caption as string)
+              filterCaption(item.caption)
                 .replace(/(\r\n|\n\r|\r|\n)/g, '\n')
                 .split('\n')
                 .map(elem => (
@@ -427,7 +442,7 @@ const IllustContainer: React.FC<{}> = () => {
                   {item.user.name}
                 </a>
               </div>
-              <time>{`${moment(item.created_time).format('LLL')}(JST)`}</time>
+              <time>{`${dayjs(item.created_time).format('LLL')}(JST)`}</time>
               <div className={classes.metas}>
                 <span
                   className={

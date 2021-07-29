@@ -23,25 +23,25 @@ import { Helmet } from 'react-helmet';
 import { useIntl } from 'react-intl';
 import { useObserver } from 'mobx-react-lite';
 
-import config from '@/config';
+import config from '../config';
 
-import InfiniteScroll from '@/components/InfiniteScroll';
-import GalleryList from '@/components/GalleryList';
-import Loading from '@/components/Loading';
-import Refresh from '@/components/Refresh';
-import Message from '@/components/Message';
-import LanguageSelector from '@/components/LanguageSelector';
-import SearchInput from '@/components/SearchInput';
-import Content, { IContentHandles } from '@/components/Content';
-import Storage from '@/utils/Storage';
-// import * as api from '@/utils/api';
+import InfiniteScroll from '../components/InfiniteScroll';
+import GalleryList from '../components/GalleryList';
+import Loading from '../components/Loading';
+import Refresh from '../components/Refresh';
+import Message from '../components/Message';
+import LanguageSelector from '../components/LanguageSelector';
+import SearchInput, { ISearchOptions } from '../components/SearchInput';
+import Content, { IContentHandles } from '../components/Content';
+import Storage from '../utils/Storage';
+// import * as api from '../utils/api';
 
 import LoginContainer, {
   ILoginContainerHandles,
   UserButton
-} from '@/containers/LoginContainer';
+} from './LoginContainer';
 
-import { GalleryContext } from '@/stores/GalleryStore';
+import { GalleryContext } from '../stores/GalleryStore';
 
 export const useStyles = makeStyles({
   toolbar: {
@@ -78,7 +78,9 @@ const GalleryContainer: React.FC<{}> = () => {
   const gallery = React.useContext(GalleryContext);
   const [shouldLogin] = React.useState(false);
   const [isDrawerOpen, setIsDrawerOpen] = React.useState(false);
-  const [isSearchByPopularity] = React.useState(false);
+  const [searchOptions, setSearchOptions] = React.useState<ISearchOptions>({
+    xRestrict: Storage.get('x_restrict') || false
+  });
   const loginRef = React.useRef<ILoginContainerHandles>(null);
   const contentRef = React.useRef<IContentHandles>(null);
 
@@ -90,6 +92,7 @@ const GalleryContainer: React.FC<{}> = () => {
     if (isFirstLoad) {
       gallery.page = 1;
     }
+    gallery.xRestrict = searchOptions.xRestrict;
     gallery.fetchSource();
   };
 
@@ -126,6 +129,11 @@ const GalleryContainer: React.FC<{}> = () => {
       contentRef?.current?.toTop();
       fetchSource(true);
     }
+  };
+
+  const onSearchOptionsChange = (options: ISearchOptions) => {
+    Storage.set('x_restrict', options.xRestrict);
+    setSearchOptions(options);
   };
 
   const onKeywordClick = (word: string) => {
@@ -256,7 +264,8 @@ const GalleryContainer: React.FC<{}> = () => {
           <div className={classes.toolbarMiddle} />
           <SearchInput
             onSearch={onSearch}
-            isSearchByPopularity={isSearchByPopularity}
+            onOptionsChange={onSearchOptionsChange}
+            searchOptions={searchOptions}
           />
           <LanguageSelector />
           <UserButton onClick={() => loginRef.current?.open()} />
@@ -299,7 +308,11 @@ const GalleryContainer: React.FC<{}> = () => {
               {gallery.isError && (
                 <>
                   <Message
-                    text={intl.formatMessage({ id: 'Failed to Load' })}
+                    text={
+                      gallery.errorMsg
+                        ? gallery.errorMsg
+                        : intl.formatMessage({ id: 'Failed to Load' })
+                    }
                   />
                   <div className={classes.refreshBtn}>
                     <Button

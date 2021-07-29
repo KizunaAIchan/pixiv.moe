@@ -1,6 +1,6 @@
 import honoka from 'honoka';
-import config from '@/config';
-import Storage from '@/utils/Storage';
+import config from '../config';
+import Storage from './Storage';
 
 interface IPixivResponse {
   [key: string]: any;
@@ -68,6 +68,15 @@ export const ranking = (page: number) =>
 
 export const search = (data: { word: string; page: number }) =>
   honoka.get('/v2/search', {
+    data
+  }) as Promise<IPixivResponse>;
+
+export const searchBeta = (data: {
+  word: string;
+  page: number;
+  x_restrict: number;
+}) =>
+  honoka.get('/v2/search/beta', {
     data
   }) as Promise<IPixivResponse>;
 

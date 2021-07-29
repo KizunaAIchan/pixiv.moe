@@ -2,7 +2,7 @@ import React from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import EventListener from 'react-event-listener';
 import { Search as SearchIcon } from '@material-ui/icons';
-// import { Checkbox } from '@material-ui/core';
+import { FormControlLabel, Switch } from '@material-ui/core';
 
 const useStyles = makeStyles({
   searchRoot: {
@@ -63,12 +63,26 @@ const useStyles = makeStyles({
 
 interface ISearchInputProps {
   onSearch: (value: string) => void;
-  isSearchByPopularity: boolean;
+  onOptionsChange: (options: ISearchOptions) => void;
+  searchOptions: ISearchOptions;
 }
+
+export interface ISearchOptions {
+  xRestrict: boolean;
+}
+
+type TSearchOptionsKeys = keyof ISearchOptions;
 
 const SearchInput: React.FC<ISearchInputProps> = props => {
   const classes = useStyles();
   const inputRef = React.useRef<HTMLInputElement>(null);
+  const switchRef = React.useRef<HTMLButtonElement>(null);
+
+  React.useEffect(() => {
+    if (props.searchOptions.xRestrict) {
+      switchRef.current?.click();
+    }
+  }, []);
 
   const onSearch = () => {
     if (inputRef.current) {
@@ -76,9 +90,18 @@ const SearchInput: React.FC<ISearchInputProps> = props => {
     }
   };
 
+  const onSwitchChange = (
+    key: TSearchOptionsKeys,
+    event: React.ChangeEvent<HTMLInputElement>
+  ) => {
+    const { searchOptions } = { ...props };
+    searchOptions[key] = event.target.checked;
+    props.onOptionsChange(searchOptions);
+  };
+
   const onKeyDown = (event: KeyboardEvent) => {
     if (event.keyCode === 13 && document.activeElement === inputRef.current) {
-      inputRef?.current?.focus();
+      inputRef?.current?.blur();
       onSearch();
     }
   };
@@ -89,14 +112,22 @@ const SearchInput: React.FC<ISearchInputProps> = props => {
         <SearchIcon />
       </div>
       <input ref={inputRef} className={classes.searchInput} />
-      {/* <div className={classes.searchOptionCheckbox}>
-          <Checkbox
-            onClick={() => this.props.onCheckBoxChange()}
-            checked={this.props.isSearchByPopularity}
-            color="primary"
+      {process.env.NODE_ENV === 'development' && (
+        <div className={classes.searchOptionCheckbox}>
+          <FormControlLabel
+            style={{ marginLeft: 0 }}
+            control={
+              <Switch
+                ref={switchRef}
+                onChange={event => onSwitchChange('xRestrict', event)}
+                name="xRestrict"
+                color="primary"
+              />
+            }
+            label="R-18"
           />
-          <span>Search by popularity tags</span>
-        </div> */}
+        </div>
+      )}
       <EventListener target="window" onKeyDown={onKeyDown} />
     </div>
   );
