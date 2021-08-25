@@ -4,7 +4,7 @@ import { renderRoutes } from 'react-router-config';
 import {
   StylesProvider,
   MuiThemeProvider,
-  createMuiTheme,
+  createTheme,
   createGenerateClassName,
   jssPreset
 } from '@material-ui/core/styles';
@@ -24,7 +24,7 @@ import TrackPageView from '../components/TrackPageView';
 import { AlertProvider } from '../components/Alert';
 import { SocketContext, socket } from '../components/SocketContext';
 
-const theme = createMuiTheme({
+const theme = createTheme({
   palette: {
     primary: { main: blue[500] },
     secondary: { main: red.A200 }
@@ -42,18 +42,18 @@ const routes = [
   {
     exact: true,
     path: '/',
-    component: require('./GalleryContainer').default
+    component: require('../pages/Gallery').default
   },
   {
     path: '/illust/:illustId',
-    component: require('./IllustContainer').default
+    component: require('../pages/Illust').default
   },
   {
     path: '/:illustId',
-    component: require('./RedirectContainer').default
+    component: require('../pages/Redirect').default
   },
   {
-    component: require('./NotFoundContainer').default
+    component: require('../pages/NotFound').default
   }
 ];
 

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useContext } from 'react';
 import { Button, Menu, MenuItem, Box, Divider } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
 import {
@@ -8,7 +8,7 @@ import {
 import { useIntl } from 'react-intl';
 import { useObserver } from 'mobx-react-lite';
 import shortid from 'shortid';
-import config from '../config';
+import * as config from '../config';
 import Storage from '../utils/Storage';
 import chooseLocale from '../locale/chooseLocale';
 import { LocaleContext } from '../stores/LocaleStore';
@@ -20,9 +20,9 @@ const useStyles = makeStyles({
 });
 
 const LanguageSelector: React.FC<{}> = () => {
-  const [anchorEl, setAnchorEl] = React.useState<Element | null>(null);
+  const [anchorEl, setAnchorEl] = useState<Element | null>(null);
   const classes = useStyles();
-  const locale = React.useContext(LocaleContext);
+  const locale = useContext(LocaleContext);
 
   if (!locale) {
     return null;

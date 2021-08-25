@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { createContext } from 'react';
 import { observable } from 'mobx';
 import { useLocalStore } from 'mobx-react-lite';
 import * as api from '../utils/api';
@@ -78,9 +78,9 @@ const createStore = () => {
   return store;
 };
 
-type TIllustStore = ReturnType<typeof createStore>;
+type IllustStore = ReturnType<typeof createStore>;
 
-export const IllustContext = React.createContext<TIllustStore | null>(null);
+export const IllustContext = createContext<IllustStore | null>(null);
 
 export const IllustProvider: React.FC<{}> = props => {
   const store = useLocalStore(createStore);

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useRef } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import EventListener from 'react-event-listener';
 import { Search as SearchIcon } from '@material-ui/icons';
@@ -61,24 +61,24 @@ const useStyles = makeStyles({
   }
 });
 
-interface ISearchInputProps {
+interface SearchInputProps {
   onSearch: (value: string) => void;
-  onOptionsChange: (options: ISearchOptions) => void;
-  searchOptions: ISearchOptions;
+  onOptionsChange: (options: SearchOptions) => void;
+  searchOptions: SearchOptions;
 }
 
-export interface ISearchOptions {
+export interface SearchOptions {
   xRestrict: boolean;
 }
 
-type TSearchOptionsKeys = keyof ISearchOptions;
+type SearchOptionsKeys = keyof SearchOptions;
 
-const SearchInput: React.FC<ISearchInputProps> = props => {
+const SearchInput: React.FC<SearchInputProps> = props => {
   const classes = useStyles();
-  const inputRef = React.useRef<HTMLInputElement>(null);
-  const switchRef = React.useRef<HTMLButtonElement>(null);
+  const inputRef = useRef<HTMLInputElement>(null);
+  const switchRef = useRef<HTMLButtonElement>(null);
 
-  React.useEffect(() => {
+  useEffect(() => {
     if (props.searchOptions.xRestrict) {
       switchRef.current?.click();
     }
@@ -91,7 +91,7 @@ const SearchInput: React.FC<ISearchInputProps> = props => {
   };
 
   const onSwitchChange = (
-    key: TSearchOptionsKeys,
+    key: SearchOptionsKeys,
     event: React.ChangeEvent<HTMLInputElement>
   ) => {
     const { searchOptions } = { ...props };

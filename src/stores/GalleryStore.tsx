@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { createContext } from 'react';
 import { observable } from 'mobx';
 import { useLocalStore } from 'mobx-react-lite';
 import * as api from '../utils/api';
@@ -84,9 +84,9 @@ export const createStore = () => {
   return store;
 };
 
-type TGalleryStore = ReturnType<typeof createStore>;
+type GalleryStore = ReturnType<typeof createStore>;
 
-export const GalleryContext = React.createContext<TGalleryStore | null>(null);
+export const GalleryContext = createContext<GalleryStore | null>(null);
 
 export const GalleryProvider: React.FC<{}> = props => {
   const store = useLocalStore(createStore);

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect, useContext, useRef } from 'react';
 import { useLocation, useHistory } from 'react-router-dom';
 import { makeStyles } from '@material-ui/core/styles';
 import {
@@ -23,7 +23,7 @@ import { Helmet } from 'react-helmet';
 import { useIntl } from 'react-intl';
 import { useObserver } from 'mobx-react-lite';
 
-import config from '../config';
+import * as config from '../config';
 
 import InfiniteScroll from '../components/InfiniteScroll';
 import GalleryList from '../components/GalleryList';
@@ -31,15 +31,15 @@ import Loading from '../components/Loading';
 import Refresh from '../components/Refresh';
 import Message from '../components/Message';
 import LanguageSelector from '../components/LanguageSelector';
-import SearchInput, { ISearchOptions } from '../components/SearchInput';
-import Content, { IContentHandles } from '../components/Content';
+import SearchInput, { SearchOptions } from '../components/SearchInput';
+import Content, { ContentHandles } from '../components/Content';
 import Storage from '../utils/Storage';
 // import * as api from '../utils/api';
 
 import LoginContainer, {
-  ILoginContainerHandles,
+  LoginContainerHandles,
   UserButton
-} from './LoginContainer';
+} from '../containers/LoginContainer';
 
 import { GalleryContext } from '../stores/GalleryStore';
 
@@ -70,19 +70,19 @@ export const useStyles = makeStyles({
   }
 });
 
-const GalleryContainer: React.FC<{}> = () => {
+const Gallery: React.FC<{}> = () => {
   const classes = useStyles();
   const intl = useIntl();
   const location = useLocation();
   const history = useHistory();
-  const gallery = React.useContext(GalleryContext);
-  const [shouldLogin] = React.useState(false);
-  const [isDrawerOpen, setIsDrawerOpen] = React.useState(false);
-  const [searchOptions, setSearchOptions] = React.useState<ISearchOptions>({
+  const gallery = useContext(GalleryContext);
+  const [shouldLogin] = useState(false);
+  const [isDrawerOpen, setIsDrawerOpen] = useState(false);
+  const [searchOptions, setSearchOptions] = useState<SearchOptions>({
     xRestrict: Storage.get('x_restrict') || false
   });
-  const loginRef = React.useRef<ILoginContainerHandles>(null);
-  const contentRef = React.useRef<IContentHandles>(null);
+  const loginRef = useRef<LoginContainerHandles>(null);
+  const contentRef = useRef<ContentHandles>(null);
 
   if (!gallery) {
     return null;
@@ -131,7 +131,7 @@ const GalleryContainer: React.FC<{}> = () => {
     }
   };
 
-  const onSearchOptionsChange = (options: ISearchOptions) => {
+  const onSearchOptionsChange = (options: SearchOptions) => {
     Storage.set('x_restrict', options.xRestrict);
     setSearchOptions(options);
   };
@@ -142,7 +142,7 @@ const GalleryContainer: React.FC<{}> = () => {
     Storage.set('word', word);
   };
 
-  React.useEffect(() => {
+  useEffect(() => {
     // if (!api.getAuth()) {
     //   setShouldLogin(true);
     //   loginRef.current?.open(() => {
@@ -335,4 +335,4 @@ const GalleryContainer: React.FC<{}> = () => {
   ));
 };
 
-export default GalleryContainer;
+export default Gallery;

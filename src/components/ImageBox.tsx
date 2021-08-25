@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import Img from 'react-image';
 import isMobile from 'is-mobile';
@@ -110,15 +110,15 @@ const useStyles = makeStyles({
   }
 });
 
-interface IImageBoxProps {
+interface ImageBoxProps {
   items: string[];
   index: number;
   onClose: () => void;
 }
 
-const ImageBox: React.FC<IImageBoxProps> = props => {
+const ImageBox: React.FC<ImageBoxProps> = props => {
   const classes = useStyles();
-  const [index, setIndex] = React.useState(props.index);
+  const [index, setIndex] = useState(props.index);
 
   const onPrev = () =>
     setIndex((index + props.items.length - 1) % props.items.length);

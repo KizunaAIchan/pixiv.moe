@@ -1,6 +1,6 @@
 import React from 'react';
 import { makeStyles } from '@material-ui/core/styles';
-import { Fab, FabProps } from '@material-ui/core';
+import { Fab } from '@material-ui/core';
 import { Refresh as RefreshIcon } from '@material-ui/icons';
 
 const useStyles = makeStyles({
@@ -12,11 +12,11 @@ const useStyles = makeStyles({
   }
 });
 
-interface IRefreshProps extends FabProps {
+interface RefreshProps {
   onClick: () => void;
 }
 
-const Refresh: React.FC<IRefreshProps> = (props: IRefreshProps) => {
+const Refresh: React.FC<RefreshProps> = props => {
   const classes = useStyles();
   return (
     <div className={classes.floatBtn}>

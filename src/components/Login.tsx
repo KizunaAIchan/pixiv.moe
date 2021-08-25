@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useImperativeHandle, forwardRef } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import { Modal, Backdrop, Fade, Button, TextField } from '@material-ui/core';
 import { Clear as ClearIcon } from '@material-ui/icons';
@@ -51,14 +51,14 @@ const useStyles = makeStyles({
   }
 });
 
-interface ILoginProps {
+interface LoginProps {
   onLoginClick: () => void;
   onLogoutClick: () => void;
   isSubmitting: boolean;
   authData: any;
 }
 
-export interface ILoginHandles {
+export interface LoginHandles {
   open: () => void;
   close: () => void;
   reset: () => void;
@@ -67,15 +67,15 @@ export interface ILoginHandles {
   getIsOpen: () => boolean;
 }
 
-const Login = React.forwardRef<ILoginHandles, ILoginProps>((props, ref) => {
+const Login = forwardRef<LoginHandles, LoginProps>((props, ref) => {
   const classes = useStyles();
   const intl = useIntl();
 
-  const [isOpen, setIsOpen] = React.useState(false);
-  const [username, setUsername] = React.useState('');
-  const [password, setPassword] = React.useState('');
+  const [isOpen, setIsOpen] = useState(false);
+  const [username, setUsername] = useState('');
+  const [password, setPassword] = useState('');
 
-  React.useImperativeHandle(ref, () => ({
+  useImperativeHandle(ref, () => ({
     open: () => setIsOpen(true),
     close: () => setIsOpen(false),
     reset: () => {
